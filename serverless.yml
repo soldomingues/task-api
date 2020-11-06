@@ -1,0 +1,31 @@
+service: task-api
+
+provider:
+  name: aws
+  runtime: java8
+  stage: dev
+  region: us-east-1
+
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+# you can add packaging information here
+package:
+  artifact: target/hello-dev.jar
+
+functions:
+  hello:
+    handler: com.serverless.Handler
+    events:
+      - http:
+          path: hello/solange
+          method: get
+  create-task:
+    handler: com.serverless.CreateTaskHandler
+    events:
+      - http:
+          path: task/
+          method: post
+
