@@ -5,6 +5,17 @@ provider:
   runtime: java8
   stage: dev
   region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+        - dynamodb:UpdateItem
+        - dynamodb:Scan
+      Resource:
+        Fn::GetAtt: [ tasksTable, Arn ]
 
 
 # you can define service wide environment variables here
@@ -13,19 +24,63 @@ provider:
 
 # you can add packaging information here
 package:
-  artifact: target/hello-dev.jar
+  artifact: 'target/task-api-${self:provider.stage}.jar'
 
 functions:
-  hello:
-    handler: com.serverless.Handler
-    events:
-      - http:
-          path: hello/solange
-          method: get
-  create-task:
+
+# listTasks:
+#  handler: com.serverless.ListTasksHandler
+
+# getTask:
+#    handler: com.serverless.GetTaskHandler
+
+  createTask:
     handler: com.serverless.CreateTaskHandler
     events:
       - http:
-          path: task/
+          path: /task
           method: post
 
+  getTask:
+    handler: com.serverless.GetTaskHandler
+    events:
+      - http:
+          path: /task/{id}
+          method: get
+
+  listTasks:
+    handler: com.serverless.ListTasksHandler
+    events:
+      - http:
+          path: /tasks
+          method: get
+
+  deleteTask:
+    handler: com.serverless.DeleteTaskHandler
+    events:
+      - http:
+          path: /task/{id}
+          method: delete
+
+#  deleteTask:
+#      handler: com.serverless.DeleteTaskHandler
+
+#Access IAM
+
+
+#Config Table DynamoDB
+resources:
+  Resources:
+    tasksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Tasks
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
