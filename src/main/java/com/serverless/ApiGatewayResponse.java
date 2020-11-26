@@ -1,15 +1,14 @@
 package com.serverless;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ApiGatewayResponse {
 
@@ -110,7 +109,7 @@ public class ApiGatewayResponse {
 			return this;
 		}
 
-		public ApiGatewayResponse build() {
+		public ApiGatewayResponse build() throws JsonProcessingException {
 			String body = null;
 			if (rawBody != null) {
 				body = rawBody;
@@ -119,7 +118,7 @@ public class ApiGatewayResponse {
 					body = objectMapper.writeValueAsString(objectBody);
 				} catch (JsonProcessingException e) {
 					LOG.error("failed to serialize object", e);
-					throw new RuntimeException(e);
+					throw e;
 				}
 			} else if (binaryBody != null) {
 				body = new String(Base64.getEncoder().encode(binaryBody), StandardCharsets.UTF_8);

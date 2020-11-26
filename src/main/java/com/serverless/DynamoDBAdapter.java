@@ -8,7 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 
 public class DynamoDBAdapter {
 
-    private static DynamoDBAdapter db_adapter = null;
+    private static DynamoDBAdapter dbAdapter = null;
     private final AmazonDynamoDB client;
     private DynamoDBMapper mapper;
 
@@ -20,10 +20,10 @@ public class DynamoDBAdapter {
     }
 
     public static DynamoDBAdapter getInstance() {
-        if (db_adapter == null)
-            db_adapter = new DynamoDBAdapter();
+        if (dbAdapter == null)
+            dbAdapter = new DynamoDBAdapter();
 
-        return db_adapter;
+        return dbAdapter;
     }
 
     public AmazonDynamoDB getDbClient() {
